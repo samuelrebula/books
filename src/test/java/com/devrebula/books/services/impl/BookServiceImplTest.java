@@ -1,5 +1,7 @@
 package com.devrebula.books.services.impl;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,5 +36,24 @@ public class BookServiceImplTest {
 
         final Book result = underTest.create(book);
         assertEquals(book, result);
+    }
+
+    @Test
+    public void testThatFindByIdReturnsEmptyWhenNoBook() {
+        final String isbn = "123123123";
+        when(bookRepository.findById(isbn)).thenReturn(Optional.empty());
+
+        final Optional<Book> result = underTest.findById(isbn);
+        assertEquals(Optional.empty(), result);
+    }
+
+    @Test
+    public void testThatFindByIdReturnsBookWhenExists() {
+        final Book book = testBook();
+        final BookEntity bookEntity = testBookEntity();
+        when(bookRepository.findById(eq(book.getIsbn()))).thenReturn(Optional.of(bookEntity));
+
+        final Optional<Book> result = underTest.findById(book.getIsbn());
+        assertEquals(Optional.of(book), result);
     }
 }

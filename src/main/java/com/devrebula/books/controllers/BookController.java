@@ -1,7 +1,10 @@
 package com.devrebula.books.controllers;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +23,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @PutMapping("/books/{isbn}")
+    @PutMapping(path = "/books/{isbn}")
     public ResponseEntity<Book> createBook(
             @PathVariable final String isbn,
             @RequestBody final Book book) {
@@ -30,4 +33,10 @@ public class BookController {
         return response;
     }
 
+    @GetMapping(path = "/books/{isbn}")
+    public ResponseEntity<Book> retrieveBook(@PathVariable final String isbn) {
+        final Optional<Book> foundBook = bookService.findById(isbn);
+        return foundBook.map(book -> new ResponseEntity<Book>(book, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }

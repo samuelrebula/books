@@ -1,5 +1,7 @@
 package com.devrebula.books.services.impl;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.devrebula.books.domain.Book;
@@ -38,6 +40,12 @@ public class BookServiceImpl implements BookService {
                 .title(bookEntity.getTitle())
                 .author(bookEntity.getAuthor())
                 .build();
+    }
+
+    @Override
+    public Optional<Book> findById(String isbn) {
+        final Optional<BookEntity> foundBook = bookRepository.findById(isbn);
+        return foundBook.map(book -> bookEntityToBook(book));
     }
 
 }

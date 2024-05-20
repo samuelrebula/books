@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.devrebula.books.TestData;
 import com.devrebula.books.domain.Book;
+import com.devrebula.books.services.BookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -19,6 +20,9 @@ public class BookControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private BookService bookService;
 
     @Test
     public void testThatBookIsCreated() throws Exception {
@@ -30,6 +34,24 @@ public class BookControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(bookJson))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(book.getIsbn()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(book.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(book.getAuthor()));
+    }
+
+    @Test
+    public void testThatRetrieveBookReturns404WhenBookNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/books/123123123"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testThatRetrieveBookReturnsHttp200AndBookWhenExists() throws Exception {
+        final Book book = TestData.testBook();
+        bookService.create(book);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/books/" + book.getIsbn()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(book.getIsbn()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(book.getTitle()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.author").value(book.getAuthor()));
