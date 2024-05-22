@@ -1,5 +1,6 @@
 package com.devrebula.books.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -38,5 +39,10 @@ public class BookController {
         final Optional<Book> foundBook = bookService.findById(isbn);
         return foundBook.map(book -> new ResponseEntity<Book>(book, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/books")
+    public ResponseEntity<List<Book>> listBooks() {
+        return new ResponseEntity<>(bookService.listBooks(), HttpStatus.OK);
     }
 }
