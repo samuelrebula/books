@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.devrebula.books.domain.Book;
@@ -11,7 +12,10 @@ import com.devrebula.books.domain.BookEntity;
 import com.devrebula.books.repositories.BookRepository;
 import com.devrebula.books.services.BookService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
@@ -61,4 +65,12 @@ public class BookServiceImpl implements BookService {
         return bookRepository.existsById(book.getIsbn());
     }
 
+    @Override
+    public void deleteBookById(String isbn) {
+        try {
+            bookRepository.deleteById(isbn);
+        } catch (final EmptyResultDataAccessException ex) {
+            log.debug("Attempted to delete non-existing book", ex);
+        }
+    }
 }

@@ -11,6 +11,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,6 +22,10 @@ import com.devrebula.books.domain.Book;
 import com.devrebula.books.domain.BookEntity;
 import com.devrebula.books.repositories.BookRepository;
 
+/**
+ *
+ * @author samuel
+ */
 @ExtendWith(MockitoExtension.class)
 public class BookServiceImplTest {
 
@@ -87,5 +93,12 @@ public class BookServiceImplTest {
         when(bookRepository.existsById(any())).thenReturn(true);
         final boolean result = underTest.isBookExists(testBook());
         assertEquals(true, result);
+    }
+
+    @Test
+    public void testDeleteBookDeletesBook() {
+        final String isbn = "13123213";
+        underTest.deleteBookById(isbn);
+        verify(bookRepository, times(1)).deleteById(eq(isbn));
     }
 }

@@ -97,4 +97,19 @@ public class BookControllerIT {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].title").value(book.getTitle()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].author").value(book.getAuthor()));
     }
+
+    @Test
+    public void testThatHttp204IsReturnedWhenBookDoesntExist() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/books/21321213"))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void testThatHttp204IsReturnedWhenExistingBookIsDeleted() throws Exception {
+        final Book book = TestData.testBook();
+        bookService.save(book);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/books/" + book.getIsbn()))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 }
