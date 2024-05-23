@@ -22,7 +22,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book create(final Book book) {
+    public Book save(final Book book) {
         final BookEntity bookEntity = bookToBookEntity(book);
         final BookEntity savedBookEntity = bookRepository.save(bookEntity);
         return bookEntityToBook(savedBookEntity);
@@ -54,6 +54,11 @@ public class BookServiceImpl implements BookService {
     public List<Book> listBooks() {
         final List<BookEntity> foundBooks = bookRepository.findAll();
         return foundBooks.stream().map(book -> bookEntityToBook(book)).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isBookExists(Book book) {
+        return bookRepository.existsById(book.getIsbn());
     }
 
 }

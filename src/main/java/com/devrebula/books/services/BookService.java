@@ -7,7 +7,9 @@ import com.devrebula.books.domain.Book;
 
 public interface BookService {
 
-    Book create(Book book);
+    boolean isBookExists(Book book);
+
+    Book save(Book book);
 
     Optional<Book> findById(String isbn);
 
